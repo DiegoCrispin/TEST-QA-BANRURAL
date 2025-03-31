@@ -28,7 +28,7 @@
       <p>Hemos seleccionado un número aleatorío entre 1 a 100. Trata de adivinar el número, en un total de 10 turnos o menos. No te preocupes, te diremos sí el número es más alto o más bajo </p>
 
 <div class="form">
-  <label for="guessField">Ingresa el número a adivinar: </label><input type="text" id="guessField" class="guessField">
+  <label for="guessField">Ingresa el número a adivinar: </label><input type="number" id="guessField" class="guessField" > 
   <input type="submit" value="Ingresar el número aleatorio" class="guessSubmit">
 </div>
 
@@ -41,12 +41,12 @@
 </body>
 
 <script>
-  let randomNumber = Math.random() * 10;
+  let randomNumber = Math.floor(Math.random() * 100) + 1; // se modifico el numero aleatorio para que de numeros de 0 a 100
 
-  const ATTEMPS = 5;
+  const ATTEMPS = 10; // se modifico el numero de intentos a 10
   const guesses = document.querySelector('.guesses');
   const lastResult = document.querySelector('.lastResult');
-  const lowOrHi = document.querySelector('lowOrHi');
+  const lowOrHi = document.querySelector('.lowOrHi'); //Se modifico el nombre a lowOrHi por .lowOrHi
   const guessSubmit = document.querySelector('.guessSubmit');
   const guessField = document.querySelector('.guessField');
 
@@ -55,36 +55,45 @@
 
   function checkGuess() {
 
-    let userGuess = guessField.value;
+    let userGuess = Number(guessField.value); // se modifico el input de text a number
+     // Validación para asegurarse que el número esté en el rango de 1 a 100
+     if (isNaN(userGuess) || userGuess < 1 || userGuess > 100 || userGuess % 1 !== 0) {
+        alert("Por favor, ingresa un número válido entre 1 y 100.");
+        guessField.value = '';
+        guessField.focus();
+        return; 
+    }
+
     if(guessCount === 1) {
       guesses.textContent = 'Número aleatorio anterior: ';
     }
     guesses.textContent += userGuess + ' ';
 
-    if(userGuess === randomNumber) {
-      lastResult.textContent = '!!!Pérdistes!!!';
-      lastResult.style.backgroundColor = 'black';
+  // Verifica si adivinó el número
+    if (userGuess === randomNumber) {
+      lastResult.textContent = '¡Felicidades! Adivinaste el número.';
+      lastResult.style.backgroundColor = 'green';
       lowOrHi.textContent = '';
       setGameOver();
-    } else if(guessCount === ATTEMPS) {
-      lastResult.textContent = 'Felicitaciones! adivinaste el número!';
-      lastResult.style.backgroundColor = 'red';
+  // Si ya llegó al número máximo de intentos
+    } else if (guessCount === ATTEMPS) {
+      lastResult.textContent = '¡Perdiste! El número correcto era ' + randomNumber;
+      lastResult.style.backgroundColor = 'black';
       setGameOver();
     } else {
-      lastResult.textContent = 'Incorrecto! ';
-      lastResult.style.backgroundColor = 'green';
-      if(userGuess < randomNumber) {
+      lastResult.textContent = 'Incorrecto!';
+      lastResult.style.backgroundColor = 'red';
+      if (userGuess < randomNumber) {
         lowOrHi.textContent = 'El número es mayor!';
-      } else if(userGuess > randomNumber) {
+      } else if (userGuess > randomNumber) {
         lowOrHi.textContent = 'El número es menor!';
       }
     }
-
     guessCount++;
     guessField.value = '';
     guessField.focus();
   }
-  guessSubmit.addeventListener('click', checkGuess);
+  guessSubmit.addEventListener('click', checkGuess); // addeventListener se modifico a addEventListener
 
   function setGameOver() {
 	  guessField.disabled = true;
@@ -92,7 +101,7 @@
 	  resetButton = document.createElement('button');
 	  resetButton.textContent = 'Comienza un nuevo juego';
 	  document.body.appendChild(resetButton);
-	  resetButton.addeventListener('click', resetGame);
+	  resetButton.addEventListener('click', resetGame); // addeventListener se modifico a addEventListener
   }
 
   function resetGame() {
@@ -111,7 +120,7 @@
 
 	  lastResult.style.backgroundColor = 'white';
 
-	  randomNumber = Math.floor(Math.random()) + 1;
+	  randomNumber = Math.floor(Math.random() * 100) + 1; // se modifico a Math.random()*100) + 1.
   }
 </script>
 </html>
